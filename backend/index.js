@@ -5,18 +5,17 @@ const dotenv = require('dotenv');
 
 dotenv.config();
 
-const app = express();
+const app = require('./src/app');
+const config = require('./src/config/environment');
 
 // Middleware
 const corsOptions = {
   origin: [
-    process.env.FRONTEND_URL || 'http://localhost:5173', 
-    process.env.BACKEND_URL || 'http://localhost:3000'
+    'http://localhost:5173',  // Local frontend
+    process.env.FRONTEND_URL  // Deployed frontend URL
   ],
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true,
-  optionsSuccessStatus: 200
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 };
 app.use(cors(corsOptions));
 app.use(express.json());
@@ -29,7 +28,8 @@ mongoose.connect(process.env.MONGODB_URI)
 // Routes
 app.use('/api/auth', require('./src/routes/auth'));
 
-const PORT = process.env.PORT || 3000;
+const PORT = config.port;
+
 app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`Server running in ${config.environment} mode on port ${PORT}`);
 });

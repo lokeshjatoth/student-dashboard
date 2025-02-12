@@ -15,7 +15,6 @@
   "env": {
     "MONGODB_URI": "@mongodb_uri",
     "JWT_SECRET": "@jwt_secret",
-    "BACKEND_URL": "@backend_url",
     "FRONTEND_URL": "@frontend_url"
   }
 }

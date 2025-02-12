@@ -14,7 +14,6 @@
     }
   ],
   "env": {
-    "VITE_BACKEND_URL": "@backend_url",
-    "VITE_FRONTEND_URL": "@frontend_url"
+    "VITE_BACKEND_URL": "@backend_url"
   }
 }
