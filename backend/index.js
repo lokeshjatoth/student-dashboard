@@ -1,35 +1,21 @@
-const express = require('express');
-const cors = require('cors');
-const mongoose = require('mongoose');
-const dotenv = require('dotenv');
-
-dotenv.config();
-
+require('dotenv').config();
 const app = require('./src/app');
-const config = require('./src/config/environment');
+const connectDB = require('./src/config/database');
+const mongoose = require('mongoose');
 
-// Middleware
-const corsOptions = {
-  origin: [
-    'http://localhost:5173',  // Local frontend
-    process.env.FRONTEND_URL  // Deployed frontend URL
-  ],
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-};
-app.use(cors(corsOptions));
-app.use(express.json());
+// Connect to Database
+mongoose.connect(process.env.MONGODB_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
+.then(() => console.log('MongoDB connected successfully'))
+.catch((error) => {
+  console.error('MongoDB connection error:', error.message);
+  process.exit(1);
+});
 
-// Database Connection
-mongoose.connect(process.env.MONGODB_URI)
-  .then(() => console.log('MongoDB Connected'))
-  .catch(err => console.error('MongoDB connection error:', err));
-
-// Routes
-app.use('/api/auth', require('./src/routes/auth'));
-
-const PORT = config.port;
+const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
-  console.log(`Server running in ${config.environment} mode on port ${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
