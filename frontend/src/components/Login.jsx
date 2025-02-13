@@ -17,16 +17,30 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-
     try {
+      console.log('Attempting login with:', { email, password });
+      
       const response = await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/api/auth/login`, 
+        'http://localhost:3000/api/auth/login', 
         { email, password }
       );
+      
+      console.log('Login response:', response.data);
       login(response.data.token);
       navigate('/dashboard');
     } catch (err) {
-      setError(err.response?.data?.message || 'Login failed');
+      console.error('Login error:', {
+        response: err.response,
+        request: err.request,
+        message: err.message,
+        config: err.config
+      });
+      
+      setError(
+        err.response?.data?.message || 
+        err.message || 
+        'Login failed'
+      );
     }
   };
 

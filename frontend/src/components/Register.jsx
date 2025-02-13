@@ -36,14 +36,28 @@ const Register = () => {
 
     try {
       const { confirmPassword, ...submitData } = formData;
+      console.log('Submitting registration data:', submitData);
+      
       const response = await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/api/auth/register`, 
+        'http://localhost:3000/api/auth/register', 
         submitData
       );
+      
+      console.log('Registration response:', response.data);
       login(response.data.token);
       navigate('/dashboard');
     } catch (err) {
-      setError(err.response?.data?.message || 'Registration failed');
+      console.error('Registration error:', {
+        response: err.response,
+        request: err.request,
+        message: err.message
+      });
+      
+      setError(
+        err.response?.data?.message || 
+        err.message || 
+        'Registration failed'
+      );
     }
   };
 
@@ -108,9 +122,12 @@ const Register = () => {
               required
             >
               <option value="">Select Semester</option>
-              {[1, 2, 3, 4, 5, 6, 7, 8].map(sem => (
-                <option key={sem} value={sem}>{sem}</option>
-              ))}
+              <option value="1">1st Semester</option>
+              <option value="2">2nd Semester</option>
+              <option value="3">3rd Semester</option>
+              <option value="4">4th Semester</option>
+              <option value="5">5th Semester</option>
+              <option value="6">6th Semester</option>
             </select>
           </div>
           <div className="mb-4">
@@ -125,7 +142,7 @@ const Register = () => {
               required
             />
           </div>
-          <div className="mb-6">
+          <div className="mb-4">
             <label htmlFor="confirmPassword" className="block text-violet-700 mb-2">Confirm Password</label>
             <input
               type="password"
@@ -139,25 +156,14 @@ const Register = () => {
           </div>
           <button
             type="submit"
-            className="w-full bg-violet-600 text-white py-2 rounded-md hover:bg-violet-700 transition duration-300 cursor-pointer"
+            className="w-full bg-violet-600 text-white py-2 rounded-md hover:bg-violet-700 transition duration-300"
           >
             Register
           </button>
         </form>
-        <div className="mt-4 text-center">
-          <p className="text-violet-700">
-            Already have an account?{' '}
-            <a 
-              href="/login" 
-              className="text-yellow-600 hover:underline cursor-pointer"
-            >
-              Login here
-            </a>
-          </p>
-        </div>
       </div>
     </div>
   );
-};
+}
 
 export default Register;
