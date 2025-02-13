@@ -1,6 +1,9 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import axios from 'axios';
 
+// Determine backend URL
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
+
 // Configure axios defaults
 axios.defaults.withCredentials = true;
 axios.defaults.headers.common['Content-Type'] = 'application/json';
@@ -24,7 +27,7 @@ export const AuthProvider = ({ children }) => {
   const verifyToken = async (token) => {
     try {
       const response = await axios.get(
-        `${import.meta.env.VITE_BACKEND_URL}/api/auth/verify`, 
+        `${BACKEND_URL}/api/auth/verify`, 
         {
           headers: { Authorization: `Bearer ${token}` }
         }
@@ -34,6 +37,7 @@ export const AuthProvider = ({ children }) => {
       setUser(response.data.user);
       setLoading(false);
     } catch (error) {
+      console.error('Token verification failed:', error);
       localStorage.removeItem('token');
       setIsAuthenticated(false);
       setUser(null);
@@ -53,9 +57,15 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
   };
 
+  // Method to check authentication status
+  const checkAuthentication = () => {
+    const token = localStorage.getItem('token');
+    return !!token;
+  };
+
   return (
     <AuthContext.Provider value={{ 
-      isAuthenticated, 
+      isAuthenticated: checkAuthentication, 
       user, 
       loading, 
       login, 
