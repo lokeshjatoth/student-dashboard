@@ -3,6 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 
+// Determine backend URL based on environment
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:3000';
+
 // Ensure axios is configured
 axios.defaults.withCredentials = true;
 axios.defaults.headers.common['Content-Type'] = 'application/json';
@@ -19,9 +22,10 @@ const Login = () => {
     setError('');
     try {
       console.log('Attempting login with:', { email, password });
+      console.log('Using backend URL:', BACKEND_URL);
       
       const response = await axios.post(
-        'http://localhost:3000/api/auth/login', 
+        `${BACKEND_URL}/api/auth/login`, 
         { email, password }
       );
       

@@ -3,12 +3,28 @@ const cors = require('cors');
 
 const app = express();
 
-// More specific CORS configuration
+// Dynamic CORS configuration
 const corsOptions = {
-  origin: 'http://localhost:5173', // Explicitly set the frontend origin
+  origin: function (origin, callback) {
+    // List of allowed origins
+    const allowedOrigins = [
+      'http://localhost:5173',  // Vite dev server
+      'https://student-dashboard-1-vema.onrender.com', // Render production URL
+      'http://localhost:3000',  // Backend dev server
+      undefined  // For server-to-server or non-browser requests
+    ];
+
+    // Allow if origin is in the list or not specified (for server-side requests)
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('CORS not allowed for this origin'));
+    }
+  },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true // Important for withCredentials
+  credentials: true,
+  optionsSuccessStatus: 200
 };
 
 // Basic middleware
@@ -19,6 +35,7 @@ app.use(express.urlencoded({ extended: true }));
 // Logging middleware
 app.use((req, res, next) => {
   console.log(`Received ${req.method} request to ${req.path}`);
+  console.log('Origin:', req.get('origin'));
   console.log('Headers:', req.headers);
   console.log('Body:', req.body);
   next();
