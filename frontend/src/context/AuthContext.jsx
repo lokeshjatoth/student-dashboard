@@ -11,7 +11,6 @@ axios.defaults.headers.common['Content-Type'] = 'application/json';
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -33,13 +32,10 @@ export const AuthProvider = ({ children }) => {
         }
       );
       
-      setIsAuthenticated(true);
       setUser(response.data.user);
       setLoading(false);
     } catch (error) {
-      console.error('Token verification failed:', error);
       localStorage.removeItem('token');
-      setIsAuthenticated(false);
       setUser(null);
       setLoading(false);
     }
@@ -47,25 +43,23 @@ export const AuthProvider = ({ children }) => {
 
   const login = (token) => {
     localStorage.setItem('token', token);
-    setIsAuthenticated(true);
     verifyToken(token);
   };
 
   const logout = () => {
     localStorage.removeItem('token');
-    setIsAuthenticated(false);
     setUser(null);
   };
 
   // Method to check authentication status
-  const checkAuthentication = () => {
+  const isAuthenticated = () => {
     const token = localStorage.getItem('token');
     return !!token;
   };
 
   return (
     <AuthContext.Provider value={{ 
-      isAuthenticated: checkAuthentication, 
+      isAuthenticated, 
       user, 
       loading, 
       login, 

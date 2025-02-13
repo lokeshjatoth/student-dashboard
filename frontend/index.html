@@ -19,6 +19,16 @@
         }
       })();
     </script>
+    
+    <!-- Render.com specific routing script -->
+    <script>
+      (function() {
+        if (window.location.pathname !== '/' && window.location.pathname.split('/').filter(Boolean).length === 1) {
+          sessionStorage.redirect = window.location.pathname;
+          window.location.href = '/';
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
